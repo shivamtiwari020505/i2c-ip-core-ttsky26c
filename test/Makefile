@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2026 shivamtiwari020505
+# SPDX-License-Identifier: Apache-2.0
+
 # Makefile
 # See https://docs.cocotb.org/en/stable/quickstart.html for more info
 
@@ -6,7 +9,7 @@ SIM ?= icarus
 FST ?= -fst # Use more efficient FST format
 TOPLEVEL_LANG ?= verilog
 SRC_DIR = $(PWD)/../src
-PROJECT_SOURCES = project.v
+PROJECT_SOURCES = clk_divider.v apb_slave_if.v sync_fifo.v reg_file.v i2c_master_fsm.v i2c_slave_fsm.v i2c_line_filter.v i2c_top_split_io.v tt_um_shivamtiwari020505_i2c.v
 
 ifneq ($(GATES),yes)
 

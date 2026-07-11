@@ -1,56 +1,64 @@
 # Tiny Tapeout project information
 project:
-  title:        ""      # Project title
-  author:       ""      # Your name
-  discord:      ""      # Your discord username, for communication and automatically assigning you a Tapeout role (optional)
-  description:  ""      # One line description of what your project does
-  language:     "Verilog" # other examples include SystemVerilog, Amaranth, VHDL, etc
-  clock_hz:     0       # Clock frequency in Hz (or 0 if not applicable)
+  title:        "APB I2C Master/Slave Core"
+  author:       "shivamtiwari020505"
+  discord:      ""
+  description:  "Full I2C master/slave controller with FIFOs, IRQ, and Tiny Tapeout byte host bridge"
+  language:     "Verilog"
+  clock_hz:     50000000
 
   # How many tiles your design occupies? A single tile is about 167x108 uM.
-  tiles: "1x1"          # Valid values: 1x1, 1x2, 2x2, 3x2, 4x2, 6x2 or 8x2
+  tiles: "2x2"
 
   # Your top module name must start with "tt_um_". Make it unique by including your github username:
-  top_module:  "tt_um_example"
+  top_module:  "tt_um_shivamtiwari020505_i2c"
 
   # List your project's source files here.
   # Source files must be in ./src and you must list each source file separately, one per line.
   # Don't forget to also update `PROJECT_SOURCES` in test/Makefile.
   source_files:
-    - "project.v"
+    - "clk_divider.v"
+    - "apb_slave_if.v"
+    - "sync_fifo.v"
+    - "reg_file.v"
+    - "i2c_master_fsm.v"
+    - "i2c_slave_fsm.v"
+    - "i2c_line_filter.v"
+    - "i2c_top_split_io.v"
+    - "tt_um_shivamtiwari020505_i2c.v"
 
 # The pinout of your project. Leave unused pins blank. DO NOT delete or add any pins.
 # This section is for the datasheet/website. Use descriptive names (e.g., RX, TX, MOSI, SCL, SEG_A, etc.).
 pinout:
   # Inputs
-  ui[0]: ""
-  ui[1]: ""
-  ui[2]: ""
-  ui[3]: ""
-  ui[4]: ""
-  ui[5]: ""
-  ui[6]: ""
-  ui[7]: ""
+  ui[0]: "HOST_DATA0"
+  ui[1]: "HOST_DATA1"
+  ui[2]: "HOST_DATA2"
+  ui[3]: "HOST_DATA3"
+  ui[4]: "HOST_DATA4"
+  ui[5]: "HOST_DATA5"
+  ui[6]: "HOST_DATA6"
+  ui[7]: "HOST_DATA7"
 
   # Outputs
-  uo[0]: ""
-  uo[1]: ""
-  uo[2]: ""
-  uo[3]: ""
-  uo[4]: ""
-  uo[5]: ""
-  uo[6]: ""
-  uo[7]: ""
+  uo[0]: "HOST_RDATA0"
+  uo[1]: "HOST_RDATA1"
+  uo[2]: "HOST_RDATA2"
+  uo[3]: "HOST_RDATA3"
+  uo[4]: "HOST_RDATA4"
+  uo[5]: "HOST_RDATA5"
+  uo[6]: "HOST_RDATA6"
+  uo[7]: "HOST_RDATA7"
 
   # Bidirectional pins
-  uio[0]: ""
-  uio[1]: ""
-  uio[2]: ""
-  uio[3]: ""
-  uio[4]: ""
-  uio[5]: ""
-  uio[6]: ""
-  uio[7]: ""
+  uio[0]: "SDA"
+  uio[1]: "SCL"
+  uio[2]: "WR_STROBE"
+  uio[3]: "RD_STROBE"
+  uio[4]: "REG_SEL"
+  uio[5]: "IRQ"
+  uio[6]: "IRQ_CLEAR"
+  uio[7]: "WRAPPER_ERR"
 
 # Do not change!
 yaml_version: 6
