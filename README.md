@@ -1,42 +1,111 @@
-![](../../workflows/gds/badge.svg) ![](../../workflows/docs/badge.svg) ![](../../workflows/test/badge.svg) ![](../../workflows/fpga/badge.svg)
+# APB I2C Master/Slave Core for Tiny Tapeout
 
-# Tiny Tapeout Verilog Project Template
+[![GDS](https://github.com/shivamtiwari020505/i2c-ip-core-ttsky26c/actions/workflows/gds.yaml/badge.svg?branch=main)](https://github.com/shivamtiwari020505/i2c-ip-core-ttsky26c/actions/workflows/gds.yaml)
+[![Docs](https://github.com/shivamtiwari020505/i2c-ip-core-ttsky26c/actions/workflows/docs.yaml/badge.svg?branch=main)](https://github.com/shivamtiwari020505/i2c-ip-core-ttsky26c/actions/workflows/docs.yaml)
+[![Test](https://github.com/shivamtiwari020505/i2c-ip-core-ttsky26c/actions/workflows/test.yaml/badge.svg?branch=main)](https://github.com/shivamtiwari020505/i2c-ip-core-ttsky26c/actions/workflows/test.yaml)
+[![FPGA](https://github.com/shivamtiwari020505/i2c-ip-core-ttsky26c/actions/workflows/fpga.yaml/badge.svg)](https://github.com/shivamtiwari020505/i2c-ip-core-ttsky26c/actions/workflows/fpga.yaml)
 
-- [Read the documentation for project](docs/info.md)
+A synthesizable Verilog I2C master/slave controller packaged for the Tiny Tapeout TTSKY26c shuttle. The design keeps a reusable APB-style I2C core internally and exposes a compact byte-wide Tiny Tapeout host bridge at the `tt_um` boundary.
 
-## What is Tiny Tapeout?
+- Top module: `tt_um_shivamtiwari020505_i2c`
+- Target shuttle: TTSKY26c / Sky130
+- Clock: 50 MHz
+- Tile size: `2x2`
+- License: Apache-2.0
 
-Tiny Tapeout is an educational project that aims to make it easier and cheaper than ever to get your digital and analog designs manufactured on a real chip.
+## Features
 
-To learn more and get started, visit https://tinytapeout.com.
+- I2C master and slave operation in one core
+- FIFO-backed TX and RX data paths
+- Byte-oriented Tiny Tapeout host interface
+- Open-drain SDA/SCL split-I/O implementation for ASIC pads
+- IRQ output plus explicit `IRQ_CLEAR` input
+- `WRAPPER_ERR` pin for host-visible APB access errors
+- Independent SystemVerilog BFMs for wrapper-level bus verification
 
-## Set up your Verilog project
+## Tiny Tapeout Interface
 
-1. Add your Verilog files to the `src` folder.
-2. Edit the [info.yaml](info.yaml) and update information about your project, paying special attention to the `source_files` and `top_module` properties. If you are upgrading an existing Tiny Tapeout project, check out our [online info.yaml migration tool](https://tinytapeout.github.io/tt-yaml-upgrade-tool/).
-3. Edit [docs/info.md](docs/info.md) and add a description of your project.
-4. Adapt the testbench to your design. See [test/README.md](test/README.md) for more information.
+| Signal | Direction | Description |
+| --- | --- | --- |
+| `ui_in[7:0]` | Input | Host write byte |
+| `uo_out[7:0]` | Output | Last host read byte |
+| `uio[0]` | Bidirectional | I2C SDA, open-drain low drive |
+| `uio[1]` | Bidirectional | I2C SCL, open-drain low drive |
+| `uio[2]` | Input | Write strobe |
+| `uio[3]` | Input | Read strobe |
+| `uio[4]` | Input | Register select: data path or command/status path |
+| `uio[5]` | Output | IRQ |
+| `uio[6]` | Input | `IRQ_CLEAR`, pulse high for one cycle |
+| `uio[7]` | Output | `WRAPPER_ERR`, pulses on failed host register access |
 
-The GitHub action will automatically build the ASIC files using [LibreLane](https://www.zerotoasiccourse.com/terminology/librelane/).
+The wrapper auto-configures the core after reset:
 
-## Enable GitHub actions to build the results page
+- Local slave address: `0x52`
+- Master target address: `0x50`
+- Core, master, slave, and IRQ enables asserted
+- Prescaler left at the reset default for 50 MHz / 400 kHz operation
 
-- [Enabling GitHub Pages](https://tinytapeout.com/faq/#my-github-action-is-failing-on-the-pages-part)
+## Verification Status
 
-## Resources
+| Flow | Status | Notes |
+| --- | --- | --- |
+| `test.yaml` | Passing | Tiny Tapeout cocotb smoke test |
+| `docs.yaml` | Passing | Datasheet/documentation generation |
+| `gds.yaml` | Passing | LibreLane hardening, precheck, GL test, and viewer deploy |
+| `fpga.yaml` | Passing | Manually dispatched FPGA workflow |
+| Wrapper bus regression | Passing | `tb/tb_wrapper_top.sv`, independent I2C master/slave BFMs |
 
-- [FAQ](https://tinytapeout.com/faq/)
-- [Digital design lessons](https://tinytapeout.com/digital_design/)
-- [Learn how semiconductors work](https://tinytapeout.com/siliwiz/)
-- [Join the community](https://tinytapeout.com/discord)
-- [Build your design locally](https://www.tinytapeout.com/guides/local-hardening/)
+Latest GDS run summary:
 
-## What next?
+| Metric | Value |
+| --- | --- |
+| Tile count | `2x2` |
+| Die area template | `0 0 334.88 225.76` |
+| Final instance utilization | `45.9394%` |
+| Core area | `72564.6` |
+| Die area | `75602.5` |
+| Reported violations | `0` |
 
-- [Submit your design to the next shuttle](https://app.tinytapeout.com/).
-- Edit [this README](README.md) and explain your design, how it works, and how to test it.
-- Share your project on your social network of choice:
-  - LinkedIn [#tinytapeout](https://www.linkedin.com/search/results/content/?keywords=%23tinytapeout) [@TinyTapeout](https://www.linkedin.com/company/100708654/)
-  - Mastodon [#tinytapeout](https://chaos.social/tags/tinytapeout) [@matthewvenn](https://chaos.social/@matthewvenn)
-  - X (formerly Twitter) [#tinytapeout](https://twitter.com/hashtag/tinytapeout) [@tinytapeout](https://twitter.com/tinytapeout)
-  - Bluesky [@tinytapeout.com](https://bsky.app/profile/tinytapeout.com)
+Detailed wrapper regression results are in [docs/TINYTAPEOUT_WRAPPER_BUS_REGRESSION.md](docs/TINYTAPEOUT_WRAPPER_BUS_REGRESSION.md).
+
+## Repository Layout
+
+| Path | Purpose |
+| --- | --- |
+| `src/` | Synthesizable RTL and Tiny Tapeout top module |
+| `test/` | Required Tiny Tapeout cocotb harness |
+| `tb/` | SystemVerilog wrapper bus regression and I2C BFMs |
+| `sim/` | Local wrapper regression runners |
+| `docs/` | Public project documentation and regression report |
+| `info.yaml` | Tiny Tapeout project metadata and pinout |
+
+## Running Locally
+
+Run the Tiny Tapeout cocotb smoke test:
+
+```sh
+cd test
+make
+```
+
+Run the wrapper bus regression with Icarus:
+
+```sh
+bash sim/run_wrapper_bus_regression.sh
+```
+
+On Windows PowerShell:
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File .\sim\run_wrapper_bus_regression.ps1
+```
+
+## Documentation
+
+- [Tiny Tapeout project documentation](docs/info.md)
+- [Wrapper bus regression report](docs/TINYTAPEOUT_WRAPPER_BUS_REGRESSION.md)
+- [GitHub Pages GDS viewer](https://shivamtiwari020505.github.io/i2c-ip-core-ttsky26c/)
+
+## License
+
+This project is released under the Apache License 2.0. See [LICENSE](LICENSE).
