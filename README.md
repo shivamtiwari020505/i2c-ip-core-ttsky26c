@@ -109,3 +109,5 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\sim\run_wrapper_bus_regres
 ## License
 
 This project is released under the Apache License 2.0. See [LICENSE](LICENSE).
+
+<!-- Repository status refresh: 2026-07-14 -->

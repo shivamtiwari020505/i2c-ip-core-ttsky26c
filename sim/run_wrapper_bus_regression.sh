@@ -20,3 +20,4 @@ iverilog -g2012 -Wall -o "$sim_out" -I src/ \
   "${rtl[@]}" \
   tb/i2c_master_bfm.sv tb/i2c_slave_bfm.sv tb/tb_wrapper_top.sv
 vvp "$sim_out"
+# Repository status refresh: 2026-07-14

@@ -42,3 +42,5 @@ The source repository includes a SystemVerilog/Icarus wrapper bus regression in 
 ## External hardware
 
 External pull-up resistors are required on SDA and SCL. For a real demo, connect `uio[0]`/SDA and `uio[1]`/SCL to a 3.3 V I2C target such as an EEPROM, sensor, or MCU I2C peripheral, subject to the Tiny Tapeout demo board voltage and pad-use guidance.
+
+<!-- Repository status refresh: 2026-07-14 -->

@@ -55,3 +55,4 @@ cd test && make
 | TC30-TT | PASS | RX underflow pulses `WRAPPER_ERR`, latches IRQ, and `IRQ_CLEAR` clears IRQ. |
 
 No fallback was used. The BFM-based wrapper bus regression is present and passing.
+<!-- Repository status refresh: 2026-07-14 -->
